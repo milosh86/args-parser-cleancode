@@ -184,19 +184,19 @@ class Args {
     }
     
     getBoolean(arg) {
-        return BooleanArgumentMarchaler.getValue(arg);
+        return BooleanArgumentMarchaler.getValue(this.marshalers_.get(arg));
     }
     
     getString(arg) {
-        return StringArgumentMarchaler.getValue(arg);
+        return StringArgumentMarchaler.getValue(this.marshalers_.get(arg));
     }
     
     getNumber(arg) {
-        return NumberArgumentMarchaler.getValue(arg);
+        return NumberArgumentMarchaler.getValue(this.marshalers_.get(arg));
     }
     
     getStringArray(arg) {
-        return StringArrayArgumentMarchaler.getValue(arg);
+        return StringArrayArgumentMarchaler.getValue(this.marshalers_.get(arg));
     }
 
 
