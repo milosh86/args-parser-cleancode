@@ -1,4 +1,5 @@
 /*jslint node: true*/
+import 'utils' as utils;
 
 class ArgsException {
     constructor(message, data) {
@@ -12,73 +13,6 @@ var INVALID_ARGUMENT_FORMAT = 'Invalid argument format',
     INVALID_ARGUMENT_NAME = 'Invalid argument name',
     UNEXPECTED_ARGUMENT = 'Unexpected command-line argument';
 
-// utils
-function isLetter(str) {
-    var reg = /^[a-z]$/;
-
-    if (typeof str === 'string') {
-        str = str.toLowerCase();
-        return reg.test(str);
-    }
-
-    return false;
-}
-
-function assertArray(arr) {
-    if (!Array.isArray(arr)) {
-        throw new TypeError('Invalid arguments, expecting array');
-    }
-}
-
-function assertString(str) {
-    if (typeof str !== 'string') {
-        throw new TypeError('Invalid arguments, expecting string');
-    }
-}
-
-function assertNumber(num) {
-    if (typeof str !== 'number' && !(num !== num)) {
-        throw new TypeError('Invalid arguments, expecting number');
-    }
-}
-
-function assertArgumentMarshaler(am) {
-    if (typeof am !== 'object' || am === null || typeof am.set !== 'function') {
-        throw new TypeError('Invalid arguments, expecting ArgumentMarshaler');
-    }
-}
-
-function assertIterable(it) {
-    if (typeof it !== 'object' || it === null || typeof it.next !== 'function') {
-        throw new TypeError('Invalid arguments, expecting ArgumentMarshaler');
-    }
-}
-
-function arrToIterable(arr) {
-    'use strict';
-    assertArray(arr);
-    let current = 0;
-    
-    return {
-        hasNext() {
-            return current < arr.length;
-        },
-        next() {
-            if (this.hasNext()) {
-                let retVal = arr[current];
-                current += 1;
-                return {done: false, value: retVal};
-            } else {
-                return {done: true, value: void 0};
-            }
-        },
-        previous() {
-            current -= 1;
-        }
-    };
-}
-
-// utils end
 
 class Args {
     constructor(schema, args) {
@@ -86,29 +20,29 @@ class Args {
         this.argsFound_ = new Set();
         this.currentArgument_ = null;
 
-        parseSchema(schema);
-        parseArgumentStrings(args);
+        this.parseSchema_(schema);
+        this.parseArgumentStrings_(args);
     }
 
-    parseSchema(schema) {
-        assertString(schema);
+    parseSchema_(schema) {
+        utils.assertString(schema);
 
         schema.split(',').forEach(element => {
             let trimmed = element.trim();
 
             if (trimmed.length > 0) {
-                parseSchemaElement(trimmed);
+                this.parseSchemaElement_(trimmed);
             }
         });
     }
 
-    parseSchemaElement(element) {
+    parseSchemaElement_(element) {
         assertString(schema);
 
         let elementId = element.charAt(0),
             elementTail = element.substring(1);
 
-        validateSchemaElementId(elementId);
+        this.validateSchemaElementId_(elementId);
 
         if (elementTail.length === 0) {
             this.marshalers_.set(elementId, 'boolean');
@@ -126,26 +60,26 @@ class Args {
         }
     }
 
-    validateSchemaElementId(elementId) {
-        if (!isLetter(elementId)) {
+    validateSchemaElementId_(elementId) {
+        if (!utils.isLetter(elementId)) {
             throw new ArgsException(INVALID_ARGUMENT_NAME, {
                 elementId
             });
         }
     }
 
-    parseArgumentStrings(args) {
-        assertArray(args);
+    parseArgumentStrings_(args) {
+        utils.assertArray(args);
 
         // todo: make iterator
         for (let i = 0; i < args.length; i++) {
-            assertString(args[i]);
+            utils.assertString(args[i]);
             
             let argString = args[i];
             this.currentArgument_ = i;
 
             if (argString.charAt(0) === '-') {
-                parseArgumentCharacters(argString.substring(1));
+                this.parseArgumentCharacters_(argString.substring(1));
             } else {
                 this.currentArgument_ -= 1;
                 break;
@@ -153,13 +87,13 @@ class Args {
         }
     }
 
-    parseArgumentCharacters(argChars) {
+    parseArgumentCharacters_(argChars) {
         for (let i = 0; i < argChars.length; i++) {
-            parseArgumentCharacter(argChars.charAt(i));
+            this.parseArgumentCharacter_(argChars.charAt(i));
         }
     }
     
-    parseArgumentCharacter(argChar) {
+    parseArgumentCharacter_(argChar) {
         let m = this.marshalers_.get(argChar);
         
         if (!m) {
@@ -167,7 +101,7 @@ class Args {
         } else {
             this.argsFound_.add(argChar);
             try {
-                m.set(this.currentArgument_); // todo: check this
+                m.set(this.currentArgument_);
             } catch (e) {
                 e.argChar = argChar;
                 throw e;
