@@ -1,5 +1,9 @@
 /*jslint node: true*/
-import 'utils' as utils;
+
+// import 'utils' as utils; todo: check this syntax
+import * as utils from 'utils';
+
+import {BooleanArgumentMarshaler, StringArgumentMarshaler, IntegerArgumentMarshaler, DoubleArgumentMarshaler, StringArrayArgumentMarshaler} from 'argumentMarshalers';
 
 class ArgsException {
     constructor(message, data) {
@@ -118,19 +122,23 @@ class Args {
     }
     
     getBoolean(arg) {
-        return BooleanArgumentMarchaler.getValue(this.marshalers_.get(arg));
+        return BooleanArgumentMarshaler.getValue(this.marshalers_.get(arg));
     }
     
     getString(arg) {
-        return StringArgumentMarchaler.getValue(this.marshalers_.get(arg));
+        return StringArgumentMarshaler.getValue(this.marshalers_.get(arg));
     }
     
-    getNumber(arg) {
-        return NumberArgumentMarchaler.getValue(this.marshalers_.get(arg));
+    getIntiger(arg) {
+        return IntegerArgumentMarshaler.getValue(this.marshalers_.get(arg));
+    }
+    
+    getDouble(arg) {
+        return DoubleArgumentMarshaler.getValue(this.marshalers_.get(arg));
     }
     
     getStringArray(arg) {
-        return StringArrayArgumentMarchaler.getValue(this.marshalers_.get(arg));
+        return StringArrayArgumentMarshaler.getValue(this.marshalers_.get(arg));
     }
 
 
