@@ -1,4 +1,3 @@
-
 import * as utils from 'utils';
 import argsExceptionEnum from 'argsExceptionEnum';
 
@@ -14,13 +13,16 @@ class StringArgumentMarshaler {
         try {
             this.stringVal_ = currentArgument_.next();
         } catch (e) {
-            throw {};
+            throw {
+                name: 'ArgsException',
+                message: argsExceptionEnum.MISSING_STRING
+            };
         }
     }
 
     static getValue(am) {
         if (am && am.set) {
-            return this.stringVal_;
+            return am.stringVal_;
         } else {
             return '';
         }
@@ -57,11 +59,14 @@ class IntegerArgumentMarshaler {
         try {
             param = currentArgument_.next();
             numVal = parseInt(param, 10);
-            
+
             this.intVal_ = numVal;
         } catch (e) {
-            throw new ArgsException(MISSING_OR_INVALID_NUMBER);
-        }
+            throw {
+                name: 'ArgsException',
+                message: argsExceptionEnum.MISSING_OR_INVALID_NUMBER
+            };
+        };
     }
 
     static getValue(am) {
@@ -85,10 +90,13 @@ class DoubleArgumentMarshaler {
         try {
             param = currentArgument_.next();
             numVal = parseFloat(param);
-            
+
             this.doubleVal_ = numVal;
         } catch (e) {
-            throw new ArgsException(MISSING_OR_INVALID_NUMBER);
+            throw {
+                name: 'ArgsException',
+                message: argsExceptionEnum.MISSING_OR_INVALID_NUMBER
+            };
         }
     }
 
