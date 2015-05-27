@@ -39,7 +39,8 @@ function assertIterable(it) {
     }
 }
 
-function arrToIterable(arr) {
+// java like iterator
+function arrToIterator(arr) {
     'use strict';
     assertArray(arr);
     let current = 0;
@@ -52,9 +53,11 @@ function arrToIterable(arr) {
             if (this.hasNext()) {
                 let retVal = arr[current];
                 current += 1;
-                return {done: false, value: retVal};
+                return retVal;
             } else {
-                return {done: true, value: void 0};
+                throw {
+                    name: 'NoSuchElementException'
+                };
             }
         },
         previous() {

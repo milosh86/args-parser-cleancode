@@ -1,7 +1,6 @@
 import * as utils from 'utils';
 import argsExceptionEnum from 'argsExceptionEnum';
 
-
 class StringArgumentMarshaler {
     constructor() {
         this.stringVal_ = '';
@@ -40,7 +39,7 @@ class BooleanArgumentMarshaler {
 
     static getValue(am) {
         if (am && am.set) {
-            return this.booleanVal_;
+            return am.booleanVal_;
         } else {
             return false;
         }
@@ -56,6 +55,7 @@ class IntegerArgumentMarshaler {
         utils.assertIterable(currentArgument);
         let param,
             numVal;
+        
         try {
             param = currentArgument_.next();
             numVal = parseInt(param, 10);
@@ -71,7 +71,7 @@ class IntegerArgumentMarshaler {
 
     static getValue(am) {
         if (am && am.set) {
-            return this.intVal_;
+            return am.intVal_;
         } else {
             return 0;
         }
@@ -102,9 +102,31 @@ class DoubleArgumentMarshaler {
 
     static getValue(am) {
         if (am && am.set) {
-            return this.doubleVal_;
+            return am.doubleVal_;
         } else {
             return 0;
+        }
+    }
+}
+
+class StringArrayArgumentMarshaler {
+    constructor() {
+        this.strArr_ = [];
+    }
+
+    set(currentArgument) {
+        utils.assertIterable(currentArgument);
+        
+        while (currentArgument.hasNext()) {
+            this.strArr_.push(currentArgument.next());
+        }
+    }
+
+    static getValue(am) {
+        if (am && am.set) {
+            return am.strArr_;
+        } else {
+            return [];
         }
     }
 }

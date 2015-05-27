@@ -5,18 +5,7 @@ import * as utils from 'utils';
 
 import {BooleanArgumentMarshaler, StringArgumentMarshaler, IntegerArgumentMarshaler, DoubleArgumentMarshaler, StringArrayArgumentMarshaler} from 'argumentMarshalers';
 
-class ArgsException {
-    constructor(message, data) {
-        this.message = message;
-        this.data = data;
-        this.name = "ArgsException";
-    }
-}
-
-var INVALID_ARGUMENT_FORMAT = 'Invalid argument format',
-    INVALID_ARGUMENT_NAME = 'Invalid argument name',
-    UNEXPECTED_ARGUMENT = 'Unexpected command-line argument';
-
+import argsExceptionEnum from 'argsExceptionEnum';
 
 class Args {
     constructor(schema, args) {
@@ -49,45 +38,48 @@ class Args {
         this.validateSchemaElementId_(elementId);
 
         if (elementTail.length === 0) {
-            this.marshalers_.set(elementId, 'boolean');
+            this.marshalers_.set(elementId, new BooleanArgumentMarshaler());
         } else if (elementTail === '*') {
-            this.marshalers_.set(elementId, 'string');
+            this.marshalers_.set(elementId, new StringArgumentMarshaler());
         } else if (elementTail === '#') {
-            this.marshalers_.set(elementId, 'number');
+            this.marshalers_.set(elementId, new IntegerArgumentMarshaler());
+        } else if (elementTail === '##') {
+            this.marshalers_.set(elementId, new DoubleArgumentMarshaler());
         } else if (elementTail === '[*]') {
-            this.marshalers_.set(elementId, 'stringArray');
+            this.marshalers_.set(elementId, new StringArrayArgumentMarshaler());
         } else {
-            throw new ArgsException(INVALID_ARGUMENT_FORMAT, {
-                elementId,
-                elementTail
-            });
+            throw {
+                name: 'ArgsException',
+                message: argsExceptionEnum.INVALID_ARGUMENT_FORMAT,
+                elementID: elementId,
+                elementTail: elementTail
+            };
         }
     }
 
     validateSchemaElementId_(elementId) {
         if (!utils.isLetter(elementId)) {
-            throw new ArgsException(INVALID_ARGUMENT_NAME, {
-                elementId
-            });
+            throw {
+                name: 'ArgsException',
+                message: argsExceptionEnum.INVALID_ARGUMENT_NAME,
+                elementID: elementId
+            };
         }
     }
 
     parseArgumentStrings_(args) {
         utils.assertArray(args);
-
-        // todo: make iterator
-        for (let i = 0; i < args.length; i++) {
-            utils.assertString(args[i]);
-            
-            let argString = args[i];
-            this.currentArgument_ = i;
+        this.currentArgument_ = utils.arrToIterator(args);
+        
+        while (this.currentArgument_.hasNext()) {
+            let argString = this.currentArgument.next();
 
             if (argString.charAt(0) === '-') {
                 this.parseArgumentCharacters_(argString.substring(1));
             } else {
-                this.currentArgument_ -= 1;
+                this.currentArgument_.previous();
                 break;
-            }
+            }   
         }
     }
 
@@ -101,13 +93,18 @@ class Args {
         let m = this.marshalers_.get(argChar);
         
         if (!m) {
-            throw new ArgsException(UNEXPECTED_ARGUMENT, {argChar});
+            throw {
+                name: 'ArgsException',
+                message: argsExceptionEnum.UNEXPECTED_ARGUMENT,
+                argument: argChar
+            };
         } else {
             this.argsFound_.add(argChar);
             try {
                 m.set(this.currentArgument_);
             } catch (e) {
-                e.argChar = argChar;
+                // e is ArgsException
+                e.argument = argChar;
                 throw e;
             }
         }
