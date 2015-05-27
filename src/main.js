@@ -1,6 +1,6 @@
 /*jslint node: true*/
 
-var Args = require('args1');
+import {Args} from './args1';
 
 (function main() {
     var arg,
@@ -14,10 +14,14 @@ var Args = require('args1');
         
         logging = arg.getBoolean('l');
         port = arg.getNum('p');
-        directory = arg.getString(d);
+        directory = arg.getString('d');
         
         executeApplication(logging, port, directory);
     } catch (e) {
         console.log('Argument error: %s\n', e.message);
     }
 })();
+
+function executeApplication(l,p,d) {
+    console.log('Executing aplication with params: ',l, p, d)
+}

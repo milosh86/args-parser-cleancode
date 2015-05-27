@@ -66,4 +66,4 @@ function arrToIterator(arr) {
     };
 }
 
-export {isLetter, assertArgumentMarshaler, assertArray, assertIterable, assertNumber, assertString, arrToIterable};
+export {isLetter, assertArgumentMarshaler, assertArray, assertIterable, assertNumber, assertString, arrToIterator};

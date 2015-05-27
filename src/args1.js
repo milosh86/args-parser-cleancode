@@ -1,13 +1,13 @@
 /*jslint node: true*/
 
 // import 'utils' as utils; todo: check this syntax
-import * as utils from 'utils';
+import * as utils from './utils';
 
-import {BooleanArgumentMarshaler, StringArgumentMarshaler, IntegerArgumentMarshaler, DoubleArgumentMarshaler, StringArrayArgumentMarshaler} from 'argumentMarshalers';
+import {BooleanArgumentMarshaler, StringArgumentMarshaler, IntegerArgumentMarshaler, DoubleArgumentMarshaler, StringArrayArgumentMarshaler} from './argumentMarshalers';
 
-import argsExceptionEnum from 'argsExceptionEnum';
+import argsExceptionEnum from './argsExceptionEnum';
 
-class Args {
+export class Args {
     constructor(schema, args) {
         this.marshalers_ = new Map();
         this.argsFound_ = new Set();
@@ -30,7 +30,7 @@ class Args {
     }
 
     parseSchemaElement_(element) {
-        assertString(schema);
+        utils.assertString(element);
 
         let elementId = element.charAt(0),
             elementTail = element.substring(1);
@@ -72,7 +72,7 @@ class Args {
         this.currentArgument_ = utils.arrToIterator(args);
         
         while (this.currentArgument_.hasNext()) {
-            let argString = this.currentArgument.next();
+            let argString = this.currentArgument_.next();
 
             if (argString.charAt(0) === '-') {
                 this.parseArgumentCharacters_(argString.substring(1));
@@ -126,7 +126,7 @@ class Args {
         return StringArgumentMarshaler.getValue(this.marshalers_.get(arg));
     }
     
-    getIntiger(arg) {
+    getInteger(arg) {
         return IntegerArgumentMarshaler.getValue(this.marshalers_.get(arg));
     }
     

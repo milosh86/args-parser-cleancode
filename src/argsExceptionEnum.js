@@ -1,4 +1,4 @@
-export default let argsExceptionEnum = {
+export default {
     INVALID_ARGUMENT_FORMAT: 'Invalid argument format',
     INVALID_ARGUMENT_NAME: 'Invalid argument name',
     UNEXPECTED_ARGUMENT: 'Unexpected command-line argument',

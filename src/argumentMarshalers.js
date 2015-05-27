@@ -1,7 +1,7 @@
-import * as utils from 'utils';
-import argsExceptionEnum from 'argsExceptionEnum';
+import * as utils from './utils';
+import argsExceptionEnum from './argsExceptionEnum';
 
-class StringArgumentMarshaler {
+export class StringArgumentMarshaler {
     constructor() {
         this.stringVal_ = '';
     }
@@ -10,7 +10,7 @@ class StringArgumentMarshaler {
         utils.assertIterable(currentArgument);
 
         try {
-            this.stringVal_ = currentArgument_.next();
+            this.stringVal_ = currentArgument.next();
         } catch (e) {
             throw {
                 name: 'ArgsException',
@@ -28,7 +28,7 @@ class StringArgumentMarshaler {
     }
 }
 
-class BooleanArgumentMarshaler {
+export class BooleanArgumentMarshaler {
     constructor() {
         this.booleanVal_ = '';
     }
@@ -46,7 +46,7 @@ class BooleanArgumentMarshaler {
     }
 }
 
-class IntegerArgumentMarshaler {
+export class IntegerArgumentMarshaler {
     constructor() {
         this.intVal_ = 0;
     }
@@ -57,7 +57,7 @@ class IntegerArgumentMarshaler {
             numVal;
         
         try {
-            param = currentArgument_.next();
+            param = currentArgument.next();
             numVal = parseInt(param, 10);
 
             this.intVal_ = numVal;
@@ -78,7 +78,7 @@ class IntegerArgumentMarshaler {
     }
 }
 
-class DoubleArgumentMarshaler {
+export class DoubleArgumentMarshaler {
     constructor() {
         this.doubleVal_ = 0;
     }
@@ -88,7 +88,7 @@ class DoubleArgumentMarshaler {
         let param,
             numVal;
         try {
-            param = currentArgument_.next();
+            param = currentArgument.next();
             numVal = parseFloat(param);
 
             this.doubleVal_ = numVal;
@@ -109,7 +109,7 @@ class DoubleArgumentMarshaler {
     }
 }
 
-class StringArrayArgumentMarshaler {
+export class StringArrayArgumentMarshaler {
     constructor() {
         this.strArr_ = [];
     }
